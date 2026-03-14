@@ -320,28 +320,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 ---
 
-### Step 3 — Add the banner to the end of `<body>`
+### Step 3 — Add the banner to "End of <body>"
 
 In Framer: **Site Settings → Custom Code → End of `<body>`**
 
-Copy and paste this exactly — replace `GTM-XXXXXXX` with your GTM ID:
+Copy and paste this exactly — replace `GTM-XXXXXXX` with your real ID (or leave it empty if not using GTM):
 
 ```html
 <div id="cookie-root"></div>
 <script src="https://cdn.jsdelivr.net/gh/AjayVaidhyanathan/CookieCrawler@main/dist/CookieBanner.umd.js"></script>
 <script>
-  ReactDOM.createRoot(document.getElementById('cookie-root')).render(
-    React.createElement(CookieBanner, {
-      gtmId: 'GTM-XXXXXXX',
-      restaurantName: 'Martinelli',
-      privacyUrl: '/datenschutz',
-      cookiePolicyUrl: '/cookies'
-    })
-  );
+  // This now works perfectly in Framer because React is bundled inside!
+  CookieBanner.init('cookie-root', {
+    gtmId: 'GTM-XXXXXXX',
+    restaurantName: 'Martinelli',
+    privacyUrl: '/datenschutz',
+    cookiePolicyUrl: '/cookies'
+  });
 </script>
 ```
-
-> ✅ Do **not** add a `<script src="react...">` tag — Framer already includes React on every page.
 
 ---
 
@@ -354,6 +351,6 @@ Hit **Publish** in Framer. The cookie banner will appear automatically on your l
 ### Framer setup checklist
 
 - [ ] CSS + font added to `<head>`
-- [ ] Consent defaults + GTM snippet added to `<head>` (consent defaults **above** GTM)
-- [ ] Banner script added to end of `<body>` with your real `GTM-XXXXXXX`
+- [ ] (Optional) Consent defaults + GTM snippet added to `<head>`
+- [ ] Banner script added to end of `<body>` exactly as shown above
 - [ ] Published

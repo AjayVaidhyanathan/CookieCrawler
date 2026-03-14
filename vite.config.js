@@ -5,22 +5,12 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: 'CookieBanner.jsx',
+      entry: 'cdn-entry.jsx',
       name: 'CookieBanner',
       fileName: (format) => `CookieBanner.${format}.js`,
       formats: ['umd', 'es'],
     },
-    rollupOptions: {
-      // React is external — loaded separately via CDN (keeps bundle small)
-      external: ['react', 'react-dom'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-        },
-      },
-    },
-    // Inline the CSS import so the .css file is handled separately
+    // React is bundled in — Framer does not expose React/ReactDOM as globals
     cssCodeSplit: false,
   },
 })
