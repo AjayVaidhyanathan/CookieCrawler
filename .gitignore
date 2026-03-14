@@ -1,0 +1,8 @@
+# local dev preview — not part of the library
+demo/
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/
