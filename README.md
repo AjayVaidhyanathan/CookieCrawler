@@ -268,3 +268,92 @@ const CONSENT_VERSION = "2.0"   // was "1.0" — all existing users will be re-p
 --ck-gold:  #c9a96e   /* gold accent */
 --ck-white: #fdf8f0   /* text color */
 ```
+
+---
+
+## Framer Setup
+
+> **Before you start:** You will need your GTM container ID (format: `GTM-XXXXXXX`).
+
+### Step 1 — Add CSS and font to the `<head>`
+
+In Framer: **Site Settings → Custom Code → Start of `<head>`**
+
+Copy and paste this exactly:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/AjayVaidhyanathan/CookieCrawler@main/CookieBanner.css">
+```
+
+---
+
+### Step 2 — Add consent defaults + GTM to the `<head>`
+
+Still in **Site Settings → Custom Code → Start of `<head>`**, paste this **above** your GTM snippet:
+
+```html
+<!-- Consent Mode v2 defaults — must come before GTM -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    analytics_storage:  'denied',
+    ad_storage:         'denied',
+    ad_user_data:       'denied',
+    ad_personalization: 'denied',
+    wait_for_update:    500
+  });
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+```
+
+> ⚠️ Replace `GTM-XXXXXXX` with your actual GTM container ID.
+
+---
+
+### Step 3 — Add the banner to the end of `<body>`
+
+In Framer: **Site Settings → Custom Code → End of `<body>`**
+
+Copy and paste this exactly — replace `GTM-XXXXXXX` with your GTM ID:
+
+```html
+<div id="cookie-root"></div>
+<script src="https://cdn.jsdelivr.net/gh/AjayVaidhyanathan/CookieCrawler@main/dist/CookieBanner.umd.js"></script>
+<script>
+  ReactDOM.createRoot(document.getElementById('cookie-root')).render(
+    React.createElement(CookieBanner, {
+      gtmId: 'GTM-XXXXXXX',
+      restaurantName: 'Martinelli',
+      privacyUrl: '/datenschutz',
+      cookiePolicyUrl: '/cookies'
+    })
+  );
+</script>
+```
+
+> ✅ Do **not** add a `<script src="react...">` tag — Framer already includes React on every page.
+
+---
+
+### Step 4 — Publish
+
+Hit **Publish** in Framer. The cookie banner will appear automatically on your live site for every new visitor.
+
+---
+
+### Framer setup checklist
+
+- [ ] CSS + font added to `<head>`
+- [ ] Consent defaults + GTM snippet added to `<head>` (consent defaults **above** GTM)
+- [ ] Banner script added to end of `<body>` with your real `GTM-XXXXXXX`
+- [ ] Published
