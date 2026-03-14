@@ -1,6 +1,9 @@
 # local dev preview — not part of the library
 demo/
 
+# dependencies
+node_modules/
+
 # macOS
 .DS_Store
 
