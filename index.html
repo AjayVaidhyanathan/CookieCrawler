@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CookieBanner Demo</title>
+    <style>
+        body {
+            background: #080604;
+            color: #fdf8f0;
+            font-family: 'Urbanist', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        h1 { font-weight: 300; letter-spacing: 0.1em; }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>CookieBanner Demo Page</h1>
+        <p>The banner should appear in a second...</p>
+        <button onclick="localStorage.clear(); location.reload();" style="background: none; border: 1px solid rgba(201,169,110,0.3); color: #c9a96e; padding: 10px 20px; cursor: pointer; margin-top: 20px;">
+            Reset & Reload
+        </button>
+    </div>
+
+    <!-- The Script -->
+    <script src="CookieBanner.js"></script>
+    <script>
+        // Initialize the banner
+        CookieBanner.init({
+            restaurantName: "Marti's Trattoria",
+            privacyUrl: "/privacy",
+            // gtmId: "GTM-XXXXXXX" // Uncomment to test GTM
+        });
+    </script>
+</body>
+</html>
