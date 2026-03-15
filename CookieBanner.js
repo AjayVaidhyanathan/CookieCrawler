@@ -7,7 +7,9 @@
 (function() {
   const CONSENT_KEY     = "martinelli_gdpr";
   const CONSENT_DAYS    = 365;
-  const CONSENT_VERSION = "1.0";
+  const CONSENT_VERSION = "1.0.1";
+
+  let instance = null;
 
   // ── Helpers ──────────────────────────────────────────
 
@@ -122,33 +124,45 @@
     }
 
     init() {
+      console.log("[CookieBanner] Initializing...");
       setConsentDefaults();
       if (this.options.gtmId) loadGTM(this.options.gtmId);
 
       const raw = getCookie();
       if (!raw) {
+        console.log("[CookieBanner] No consent cookie found, showing banner in 900ms");
         setTimeout(() => this.showBanner(), 900);
       } else {
         try {
           const c = JSON.parse(raw);
           if (c.version !== CONSENT_VERSION) {
+            console.log("[CookieBanner] Outdated version, showing banner in 900ms");
             setTimeout(() => this.showBanner(), 900);
           } else {
+            console.log("[CookieBanner] Valid consent found:", c);
             this.state.analytics = !!c.analytics;
             this.state.marketing = !!c.marketing;
+            this.state.visible = false;
             applyConsent(c.analytics, c.marketing);
             if (c.analytics && this.options.gaId && !this.options.gtmId) loadGA4(this.options.gaId);
             this.showBubble();
           }
         } catch (e) {
+          console.error("[CookieBanner] Error parsing consent:", e);
           setTimeout(() => this.showBanner(), 900);
         }
       }
 
-      if (document.body) {
-        this.render();
+      const runRender = () => {
+        if (!document.getElementById("martinelli-cookie-container")) {
+          this.render();
+        }
+      };
+
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        runRender();
       } else {
-        document.addEventListener("DOMContentLoaded", () => this.render());
+        document.addEventListener("DOMContentLoaded", runRender);
       }
     }
 
@@ -317,20 +331,26 @@
       container.innerHTML = html;
       document.body.appendChild(container);
 
-      // Event Listeners
-      document.getElementById("ck-accept-all").onclick = () => this.acceptAll();
-      document.getElementById("ck-reject-all").onclick = () => this.rejectAll();
-      document.getElementById("ck-save-selection").onclick = () => this.saveSelection();
-      document.getElementById("ck-reopen").onclick = () => this.reopen();
+      // Event Listeners with safety checks
+      const bind = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) el.onclick = fn;
+        else console.warn(`[CookieBanner] Missing element: ${id}`);
+      };
+
+      bind("ck-accept-all", () => this.acceptAll());
+      bind("ck-reject-all", () => this.rejectAll());
+      bind("ck-save-selection", () => this.saveSelection());
+      bind("ck-reopen", () => this.reopen());
       
       this.toggles = {
         analytics: document.getElementById("ck-toggle-analytics"),
         marketing: document.getElementById("ck-toggle-marketing")
       };
 
-      this.toggles.analytics.onclick = () => this.toggle("analytics");
-      this.toggles.marketing.onclick = () => this.toggle("marketing");
-      document.getElementById("ck-details-btn").onclick = () => this.toggle("detailsOpen");
+      if (this.toggles.analytics) this.toggles.analytics.onclick = () => this.toggle("analytics");
+      if (this.toggles.marketing) this.toggles.marketing.onclick = () => this.toggle("marketing");
+      bind("ck-details-btn", () => this.toggle("detailsOpen"));
 
       this.updateUI();
     }
@@ -428,6 +448,17 @@
 
   // Global entry point
   window.CookieBanner = {
-    init: (options) => new CookieBanner(options)
+    init: (options) => {
+      if (instance) {
+        console.log("[CookieBanner] Instance already exists, skipping initialization.");
+        return instance;
+      }
+      instance = new CookieBanner(options);
+      return instance;
+    },
+    show: () => {
+      if (instance) instance.showBanner();
+      else console.error("[CookieBanner] Not initialized. Call init() first.");
+    }
   };
 })();

@@ -19,6 +19,18 @@ Add the banner to any website by including the script and initializing it:
     // gaId: "G-XXXXXXXXXX" // Optional: GA4 ID (if not using GTM)
   });
 </script>
+
+## 🚀 No Frontend Setup Needed
+The banner is fully self-contained. You do **not** need to add any HTML elements, placeholders, or CSS files to your frontend. The script automatically:
+- Injects all necessary premium styles.
+- Creates the banner and the "Cookie" bubble button.
+- Appends everything to the page safely.
+
+## 🛠 Usage in Framer
+To use this in Framer, go to **Settings > Custom Code**:
+1. Paste the script tag (Step 1) in the **Head** or **Start of Body** section.
+2. Paste the initialization script (Step 2) right below it.
+3. If the banner doesn't appear immediately after making a change, add `?v=2` to the script URL to bypass caching.
 \`\`\`
 
 ## Features
